@@ -12,7 +12,6 @@ import kotlinx.android.synthetic.main.activity_segunda.*
 import org.json.JSONArray
 import org.json.JSONObject
 import java.net.HttpURLConnection
-import java.net.URI
 import java.net.URL
 
 class SegundaActivity : AppCompatActivity() {
@@ -68,11 +67,20 @@ class SegundaActivity : AppCompatActivity() {
             val nome = jsonObject.getString("nome")
             val uf = jsonObject.getString("uf")
             val telefone = jsonObject.getString("telefone")
+            val situacao = jsonObject.getString("situacao")
+            val bairro = jsonObject.getString("bairro")
+            val logradouro = jsonObject.getString("logradouro")
+            val numero = jsonObject.getString("numero")
+            val cep = jsonObject.getString("cep")
+            val municipio = jsonObject.getString("municipio")
+            val abertura = jsonObject.getString("abertura")
+
 
 
             var atividadePrincipal = getAtividadePrincipal(jsonObject, jsonObject.getJSONArray("atividade_principal"))
-
             var atividadesSecundarias = getAtividadesSecundarias(jsonObject, jsonObject.getJSONArray("atividades_secundarias"))
+            var quadroDeSocios = getQuadroSocios(jsonObject, jsonObject.getJSONArray("qsa"))
+
 
             var string = "- ATIVIDADE PRINCIPAL - \n\n"
 
@@ -98,8 +106,26 @@ class SegundaActivity : AppCompatActivity() {
 
             }
 
-            textViewId.text = string
+            string += "\n\n"
+            string += "- QUADRO DE SÓCIOS -\n\n"
 
+            quadroDeSocios.forEach {
+                string += "Qualificação: ${it.qual}.\n" +
+                        "Nome: ${it.nome}.\n"
+            }
+
+            string += "\n\n"
+            string += "- OUTROS -\n\n"
+
+            string += "Situação: ${situacao}.\n" +
+                    "Bairro: ${bairro}.\n" +
+                    "Logradouro: ${logradouro}.\n" +
+                    "Numero: ${numero}.\n" +
+                    "Cep: ${cep}.\n" +
+                    "Município: ${municipio}.\n" +
+                    "Data de Abertura: ${abertura}.\n"
+
+            textViewId.text = string
 
         }else{
 
@@ -145,6 +171,25 @@ class SegundaActivity : AppCompatActivity() {
             x++
         }
         return atividadePrincipal
+    }
+
+    private fun getQuadroSocios(jsonObject: JSONObject, jsonArray: JSONArray): ArrayList<QuadroSocios>{
+
+        var quadros = jsonObject
+        var arrayQuadros = jsonArray
+        val quadrosDeSocios = ArrayList<QuadroSocios>()
+
+        var x = 0
+        while(x < jsonArray.length()){
+            val objeto = jsonArray.getJSONObject(x)
+            quadrosDeSocios.add(QuadroSocios(
+                    objeto.getString("qual"),
+                    objeto.getString("nome")
+            ))
+            x++
+        }
+        return quadrosDeSocios
+
     }
 
 }
